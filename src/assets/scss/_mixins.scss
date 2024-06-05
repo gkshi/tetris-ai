@@ -1,0 +1,53 @@
+/**
+ * Adaptivity mixins
+ */
+$bigDesktop: 1680px;
+$desktop: 1440px;
+$main: 1280px;
+$md: 1023px;
+$sm: 840px;
+$xs: 520px;
+$xxs: 420px;
+
+$main-height: 600px;
+
+@mixin bigDesktop {
+  @media (min-width: $bigDesktop) {
+    @content;
+  }
+}
+@mixin desktop {
+  @media (min-width: $desktop) {
+    @content;
+  }
+}
+@mixin main {
+  @media (max-width: $main) {
+    @content;
+  }
+}
+@mixin md {
+  @media (max-width: $md) {
+    @content;
+  }
+}
+@mixin sm {
+  @media (max-width: $sm) {
+    @content;
+  }
+}
+@mixin xs {
+  @media (max-width: $xs) {
+    @content;
+  }
+}
+@mixin xxs {
+  @media (max-width: $xxs) {
+    @content;
+  }
+}
+@mixin main-height {
+  @media (max-height: $main-height) {
+    @content;
+  }
+}

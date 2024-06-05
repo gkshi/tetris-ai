@@ -1,0 +1,33 @@
+@import "reset";
+@import "variables";
+@import "mixins";
+@import "utils";
+
+// global styles
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @include font-body-regular;
+  background: $color-page-bg;
+  color: $color-text-regular;
+  letter-spacing: .2px;
+}
+
+.container {
+  width: 1280px;
+  max-width: 100%;
+  margin: 0 auto;
+
+  @include main {
+    width: 980px;
+  }
+
+  @include md {
+    width: 780px;
+  }
+
+  @include sm {
+    width: 100%;
+    padding: 0 16px;
+  }
+}

@@ -1,0 +1,39 @@
+@import "../mixins";
+
+// global
+$color-primary: #AE1C74;
+$color-primary-2: #CC3761;
+
+// bg
+$color-page-bg: #171717;
+$color-modal-bg: #171717;
+
+// text
+$color-text-regular: #E1E3E6;
+$color-text-dark: #171717;
+$color-text-light: #8C8B97;
+$color-text-white: #ffffff;
+$color-text-accent: #45CC92;
+
+$color-link: #57BFF7;
+$color-danger: #e43c6b;
+$color-warning: #FDBF61;
+$color-success: #85D79B;
+
+// fonts
+$font-family-default: 'Google Sans', 'SF Pro Text', 'Arial', sans-serif;
+$font-family-secondary: 'SF Pro Display', 'Arial', sans-serif;
+$font-size-regular: 16px;
+$line-height-regular: 22px;
+$font-weight-regular: 400;
+
+@mixin font-body-regular {
+  font-family: $font-family-default;
+  font-size: $font-size-regular;
+  line-height: $line-height-regular;
+  font-weight: $font-weight-regular;
+}
+
+.font-body-regular {
+  @include font-body-regular;
+}
