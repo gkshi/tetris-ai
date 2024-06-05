@@ -56,6 +56,11 @@
         <input type="number" value="1">
         <span> figures</span>
       </div>
+      <br>
+      <div>
+        <div>figuresAmountByColumn: </div>
+        <span>{{ $ml.state.figuresAmountByColumn }}</span>
+      </div>
     </section>
   </aside>
 </template>

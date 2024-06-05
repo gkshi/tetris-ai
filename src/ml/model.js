@@ -24,9 +24,13 @@ class TetrisAI {
     return model
   }
 
-  async trainModel(xs, ys) {
-    console.log('trainModel now')
-    // await this.model.fit(xs, ys, {
+  async trainModel(xs, ys, figuresAmountByColumn) {
+    console.log('trainModel', xs, ys, figuresAmountByColumn)
+    // const combinedInput = xs.concat($ml.state.figuresAmountByColumn)
+    // const inputTensor = tf.tensor2d([combinedInput])
+    // const outputTensor = tf.tensor2d([ys])
+    //
+    // await this.model.fit(inputTensor, outputTensor, {
     //   epochs: 10,
     //   callbacks: {
     //     onEpochEnd: (epoch, logs) => {

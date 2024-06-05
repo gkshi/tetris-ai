@@ -15,57 +15,8 @@ const $ai = new TetrisAI()
 const _p5 = computed(() => $game.state._p5)
 
 const colors = ['cyan', 'blue', 'orange', 'yellow', 'green', 'purple', 'red']
-const currentPiece = ref(createPiece())
-const cols = 10
-const rows = 20
-const gridSize = 30
 
-const createEmptyGrid = () => {
-  let grid = []
-  for (let y = 0; y < rows; y++) {
-    grid[y] = []
-    for (let x = 0; x < cols; x++) {
-      grid[y][x] = 0
-    }
-  }
-  return grid
-}
-
-let grid = createEmptyGrid()
-
-const drawGrid = () => {
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      _p5.value.fill(grid[y][x] ? colors[grid[y][x] - 1] : 28)
-      _p5.value.stroke(20)
-      _p5.value.rect(x * gridSize, y * gridSize, gridSize, gridSize)
-    }
-  }
-}
-
-function clearRows(grid) {
-  let cleared = 0
-  for (let y = rows - 1; y >= 0; y--) {
-    let fullRow = true
-    for (let x = 0; x < cols; x++) {
-      if (grid[y][x] === 0) {
-        fullRow = false
-        break
-      }
-    }
-    if (fullRow) {
-      for (let yy = y; yy > 0; yy--) {
-        grid[yy] = grid[yy - 1].slice()
-      }
-      grid[0] = Array(cols).fill(0)
-      y++
-      cleared++
-    }
-  }
-  return cleared
-}
-
-function createPiece() {
+const createPiece = () => {
   const pieces = [
     [[1, 1], [1, 1]], // куб
     [[1, 1, 1, 1]], // палка
@@ -107,6 +58,57 @@ function createPiece() {
   }
 }
 
+const currentPiece = ref(createPiece())
+const cols = 10
+const rows = 20
+const gridSize = 30
+
+const createEmptyGrid = () => {
+  let grid = []
+  for (let y = 0; y < rows; y++) {
+    grid[y] = []
+    for (let x = 0; x < cols; x++) {
+      grid[y][x] = 0
+    }
+  }
+  return grid
+}
+
+// grid
+const grid = ref(createEmptyGrid())
+
+const drawGrid = () => {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      _p5.value.fill(grid.value[y][x] ? colors[grid.value[y][x] - 1] : 28)
+      _p5.value.stroke(20)
+      _p5.value.rect(x * gridSize, y * gridSize, gridSize, gridSize)
+    }
+  }
+}
+
+const clearRows = () => {
+  let cleared = 0
+  for (let y = rows - 1; y >= 0; y--) {
+    let fullRow = true
+    for (let x = 0; x < cols; x++) {
+      if (grid.value[y][x] === 0) {
+        fullRow = false
+        break
+      }
+    }
+    if (fullRow) {
+      for (let yy = y; yy > 0; yy--) {
+        grid.value[yy] = grid.value[yy - 1].slice()
+      }
+      grid.value[0] = Array(cols).fill(0)
+      y++
+      cleared++
+    }
+  }
+  return cleared
+}
+
 const showPiece = piece => {
   _p5.value.fill(colors[piece.color - 1])
   for (let y = 0; y < piece.shape.length; y++) {
@@ -118,25 +120,25 @@ const showPiece = piece => {
   }
 }
 
-function updatePiece(piece) {
+const updatePiece = piece => {
   piece.y++
 }
 
-function movePiece(piece, dir) {
+const movePiece = (piece, dir) => {
   piece.x += dir
-  if (collides(grid, piece)) {
+  if (collides(piece)) {
     piece.x -= dir
   }
 }
 
-function dropPiece(piece) {
-  while (!collides(grid, piece)) {
+const dropPiece = piece => {
+  while (!collides(piece)) {
     piece.y++
   }
   piece.y--
 }
 
-function rotatePiece(piece) {
+const rotatePiece = piece => {
   let newShape = []
   for (let y = 0; y < piece.shape[0].length; y++) {
     newShape[y] = []
@@ -146,32 +148,32 @@ function rotatePiece(piece) {
   }
   let oldShape = piece.shape
   piece.shape = newShape
-  if (collides(grid, piece)) {
+  if (collides(piece)) {
     piece.shape = oldShape
   }
 }
 
-function lockPiece(grid, piece) {
+const lockPiece = piece => {
   for (let y = 0; y < piece.shape.length; y++) {
     for (let x = 0; x < piece.shape[y].length; x++) {
       if (piece.shape[y][x]) {
         let newX = piece.x + x
         let newY = piece.y + y
         if (newY < rows && newX < cols) {
-          grid[newY][newX] = piece.color
+          grid.value[newY][newX] = piece.color
         }
       }
     }
   }
 }
 
-function collides(grid, piece) {
+const collides = piece => {
   for (let y = 0; y < piece.shape.length; y++) {
     for (let x = 0; x < piece.shape[y].length; x++) {
       if (piece.shape[y][x]) {
         let newX = piece.x + x
         let newY = piece.y + y
-        if (newX < 0 || newX >= cols || newY >= rows || grid[newY][newX]) {
+        if (newX < 0 || newX >= cols || newY >= rows || grid.value[newY][newX]) {
           return true
         }
       }
@@ -180,7 +182,7 @@ function collides(grid, piece) {
   return false
 }
 
-function performAction(action) {
+const performAction = action => {
   switch (action) {
   case 0:
     movePiece(currentPiece.value, -1)
@@ -197,8 +199,8 @@ function performAction(action) {
   }
 }
 
-function getState(grid, piece) {
-  let state = grid.flat()
+const getState = piece => {
+  let state = grid.value.flat()
   for (let y = 0; y < piece.shape.length; y++) {
     for (let x = 0; x < piece.shape[y].length; x++) {
       if (piece.shape[y][x]) {
@@ -213,6 +215,26 @@ function getState(grid, piece) {
   return state
 }
 
+const countColumnFigures = () => {
+  let columnFigures = Array(cols).fill(0)
+
+  for (let x = 0; x < cols; x++) {
+    let count = 0
+    for (let y = 0; y < rows; y++) {
+      if (grid.value[y][x] !== 0) {
+        count++
+      } else if (count > 0) {
+        columnFigures[x] = Math.max(columnFigures[x], count)
+        count = 0
+      }
+    }
+    columnFigures[x] = Math.max(columnFigures[x], count)
+  }
+
+  return columnFigures
+}
+
+
 const draw = (isRerender = false) => {
   _p5.value.background(0)
   drawGrid()
@@ -222,28 +244,32 @@ const draw = (isRerender = false) => {
   if ($game.state.isActive && !isRerender) {
     updatePiece(currentPiece.value)
 
-    if (collides(grid, currentPiece.value)) {
+    if (collides(currentPiece.value)) {
       currentPiece.value.y--
-      lockPiece(grid, currentPiece.value)
-      $game.state.rowsBurned += clearRows(grid)
+      lockPiece(currentPiece.value)
+      $game.state.rowsBurned += clearRows()
       $game.state.turnsDone++
       currentPiece.value = createPiece()
-      if (collides(grid, currentPiece.value)) {
+
+      const columnFigures = countColumnFigures()
+      $ml.state.figuresAmountByColumn = columnFigures
+
+      if (collides(currentPiece.value)) {
         $game.state.gamesPlayed++
         currentPiece.value = createPiece()
-        grid = createEmptyGrid()
+        grid.value = createEmptyGrid()
         $game.restart()
 
         if ($ml.state.isActive) {
           // TODO: здесь тренировать модель после конца игры
-          $ai.trainModel()
+          // $ai.trainModel($ml.state.figuresAmountByColumn)
         }
       }
     }
 
     // ai move
     if ($ml.state.isActive && currentPiece.value) {
-      const state = getState(grid, currentPiece.value)
+      const state = getState(currentPiece.value)
       const action = $ai.getAction(state)
       performAction(action)
     }
