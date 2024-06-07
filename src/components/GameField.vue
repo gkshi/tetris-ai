@@ -216,24 +216,37 @@ const getState = piece => {
 }
 
 const countColumnFigures = () => {
-  let columnFigures = Array(cols).fill(0)
+  let cols = Array(10).fill(0) // создаем массив с 10 элементами, заполненными нулями
 
-  for (let x = 0; x < cols; x++) {
-    let count = 0
-    for (let y = 0; y < rows; y++) {
-      if (grid.value[y][x] !== 0) {
-        count++
-      } else if (count > 0) {
-        columnFigures[x] = Math.max(columnFigures[x], count)
-        count = 0
+  // пробегаемся по каждому ряду
+  for (let row = 0; row < grid.value.length; row++) {
+    // пробегаемся по каждой колонке в текущем ряду
+    for (let col = 0; col < grid.value[row].length; col++) {
+      if (grid.value[row][col] !== 0) {
+        cols[col] += 1 // увеличиваем счетчик для соответствующего столбца
       }
     }
-    columnFigures[x] = Math.max(columnFigures[x], count)
   }
 
-  return columnFigures
+  return cols
 }
 
+const countColumnHeights = () => {
+  let heights = Array(10).fill(0) // создаем массив с 10 элементами, заполненными нулями
+
+  // пробегаемся по каждой колонке
+  for (let col = 0; col < 10; col++) {
+    // пробегаемся по каждой строке от верхней к нижней
+    for (let row = 0; row < 20; row++) {
+      if (grid.value[row][col] !== 0) {
+        heights[col] = 20 - row // высота рассчитывается как (20 - индекс строки)
+        break // выходим из цикла, как только нашли первую заполненную клетку
+      }
+    }
+  }
+
+  return heights
+}
 
 const draw = (isRerender = false) => {
   _p5.value.background(0)
@@ -252,7 +265,9 @@ const draw = (isRerender = false) => {
       currentPiece.value = createPiece()
 
       const columnFigures = countColumnFigures()
-      $ml.state.figuresAmountByColumn = columnFigures
+      const columnHeights = countColumnHeights()
+      $ml.state.filledCellsAmountByColumn = columnFigures
+      $ml.state.columnHeights = columnHeights
 
       if (collides(currentPiece.value)) {
         $game.state.gamesPlayed++
@@ -262,8 +277,11 @@ const draw = (isRerender = false) => {
 
         if ($ml.state.isActive) {
           // TODO: здесь тренировать модель после конца игры
-          // $ai.trainModel($ml.state.figuresAmountByColumn)
+          // $ml.state.filledCellsAmountByColumn
+          $ai.trainModel(true)
         }
+
+        $ml.state.filledCellsAmountByColumn = Array(10).fill(0)
       }
     }
 
@@ -272,6 +290,7 @@ const draw = (isRerender = false) => {
       const state = getState(currentPiece.value)
       const action = $ai.getAction(state)
       performAction(action)
+      $ai.recordData(state, action)
     }
 
     $game.state.framesDone++
@@ -307,6 +326,7 @@ onMounted(() => {
     instance.setup = setup
     $game.setP5(instance)
   })
+  window.grid = grid
 })
 </script>
 

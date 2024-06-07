@@ -51,15 +51,19 @@
           <option :value="0" :selected="!$ml.state.isActive">Off</option>
         </select>
       </div>
-      <div>
+      <div hidden>
         <span>after </span>
         <input type="number" value="1">
         <span> figures</span>
       </div>
       <br>
       <div>
-        <div>figuresAmountByColumn: </div>
-        <span>{{ $ml.state.figuresAmountByColumn }}</span>
+        <div>filledCellsAmountByColumn: </div>
+        <span>{{ $ml.state.filledCellsAmountByColumn }}</span>
+      </div>
+      <div>
+        <div>columnHeights: </div>
+        <span>{{ $ml.state.columnHeights }}</span>
       </div>
     </section>
   </aside>
@@ -107,6 +111,6 @@ const onTrainingEnabledChange = e => {
 
 <style lang="scss" scoped>
 aside {
-  gap: 30px;
+  gap: 40px;
 }
 </style>
